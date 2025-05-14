@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hörverständnis & Quiz</title>
+
+
+
+
+<style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    .text-container, .quiz-container, .result-container {
+        max-width: 600px;
+        margin: 20px auto;
+        font-size: 18px;
+    }
+    .controls { margin-top: 10px; }
+    button { font-size: 16px; padding: 10px; margin: 5px; cursor: pointer; }
+    .quiz-container { display: none; }
+    .result-container { display: none; }
+    .question { font-weight: bold; }
+    .answer { display: block; margin: 5px; padding: 10px; cursor: pointer; border: 1px solid #000; }
+    .correct { background-color: lightgreen; }
+    .wrong { background-color: lightcoral; }
+    .blue-text { color: blue; font-weight: bold; }
+    .icon-links img {
+        width: 50px;
+        height: 50px;
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    /* 🎉 NEUES CSS für Call-to-Action Texte */
+    .icon-links a {
+        display: inline-block;
+        text-decoration: none;
+        color: black;
+        text-align: center;
+        margin: 10px;
+    }
+
+    .icon-links p {
+        margin: 5px 0 0;
+        font-size: 14px;
+    }
+</style>
+
+
+
+
+
+</head>
+<body>
+    <h2>Hörverständnis: "Outsourced"</h2>
+    
+    <iframe id="soundcloudPlayer" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2095607442&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false">
+    </iframe>
+    
+    <div class="text-container" id="textContainer">
+        <p id="text"></p>
+    </div>
+    
+    <div class="controls">
+        <button id="prevButton">⬅️ Zurück</button>
+        <button id="nextButton">Weiter ➡️</button>
+    </div>
+    
+    <div class="quiz-container" id="quizContainer">
+        <p class="question" id="question"></p>
+        <div id="answers"></div>
+        <button id="nextQuestion">Nächste Frage ➡️</button>
+    </div>
+
+
+
+<div class="result-container" id="resultContainer">
+    <h3>Test abgeschlossen!</h3>
+    <p id="score"></p>
+    <div class="icon-links">
+        <a href="https://www.jazzupyougerman.com" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/100/000000/domain.png" alt="Webseite">
+            <p>➡️ Go to website</p>
+        </a>
+        <br>
+        <a href="https://www.instagram.com/jazzupyourgerman" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/100/000000/instagram-new.png" alt="Instagram">
+            <p>➡️ Follow JAZZ UP YOUR GERMAN on Instagram!</p>
+        </a>
+    </div>
+</div>
+
+
+
+
+    <script>
+   const textAbschnitte = [
+    "In einem Land namens Panem (called Panem) leben die Menschen in zwölf Distrikten. Diese Distrikte werden vom Kapitol regiert (are governed by). Das Kapitol ist reich und mächtig (powerful).",
+    "Die Distrikte sind arm. Früher gab es einen Krieg, weil die Distrikte gegen das Kapitol gekämpft haben (fought). Das Kapitol hat den Krieg (war) gewonnen.",
+    "Zur Strafe (as punishment) müssen die Distrikte jedes Jahr zwei Kinder in die sogenannten Hungerspiele (Hunger Games) schicken (send): ein Mädchen und einen Jungen. Diese Kinder heißen „Tribute“. In einer großen Arena müssen sie gegeneinander kämpfen (fight each other) – bis nur noch ein Kind lebt.",
+    "Das Kapitol zeigt (shows) die Spiele im Fernsehen (on television). Es ist eine grausame (cruel) Show. Katniss Everdeen ist sechzehn Jahre alt.",
+    "Sie lebt in Distrikt 12, einem der ärmsten (one of the poorest) Distrikte. Ihr Vater ist tot. Seitdem sorgt (takes care of) Katniss für ihre Mutter und ihre kleine Schwester Prim.",
+    "Katniss geht oft in den Wald, um Tiere zu jagen (hunt). Das ist eigentlich verboten (forbidden), aber sie braucht das Fleisch (meat) und verkauft es (sells it), damit ihre Familie nicht hungert (starve). Ihr bester Freund ist Gale.",
+    "Auch er geht jagen. Sie verstehen sich gut (get along well) und träumen davon, aus dem Distrikt zu fliehen (dream of fleeing). Doch sie wissen, dass das nicht möglich ist.",
+    "Dann kommt der Tag der Ernte (reaping). An diesem Tag werden die Tribute für die Hungerspiele ausgelost (drawn by lot). Katniss hat große Angst um (fears for) ihre kleine Schwester.",
+    "Prim ist erst zwölf und nimmt zum ersten Mal teil (takes part for the first time). Sie hat nur einen Zettel (slip) im Lostopf (drawing bowl). Aber genau dieser Zettel wird gezogen (is drawn): Primrose Everdeen.",
+    "Katniss ist schockiert. Sie schreit laut (shouts loudly), dass sie freiwillig (voluntarily) antritt (steps in). Sie will nicht, dass Prim stirbt (dies).",
+    "So wird Katniss das Mädchen, das an den Spielen teilnehmen muss. Der Junge, der mit ihr ausgewählt wird (is chosen), ist Peeta Mellark, der Sohn eines Bäckers. Katniss erinnert sich (remembers) an Peeta.",
+    "Als sie einmal fast verhungert ist (starved), hat Peeta ihr heimlich (secretly) Brot gegeben. Seitdem ist sie ihm dankbar (grateful). Doch nun ist er ihr Gegner in den Spielen.",
+    "Beide werden ins Kapitol gebracht (taken). Dort bekommen sie neue Kleider (clothes), lernen zu kämpfen und werden im Fernsehen gezeigt. Ihr Mentor ist Haymitch, ein älterer Mann, der früher selbst die Spiele gewonnen hat.",
+    "Er trinkt viel, aber er kennt das Spiel gut. Er sagt, dass Katniss und Peeta sich wie ein verliebtes Paar benehmen sollen (should behave). Dann mögen die Leute sie mehr und schicken ihnen vielleicht Essen oder Medizin in die Arena.",
+    "Die Arena ist ein gefährlicher Ort. Es gibt dort viele Fallen (traps), wilde Tiere, Hunger und Durst (thirst). Und natürlich die anderen Kinder, die kämpfen.",
+    "Direkt am Anfang sterben viele. Katniss läuft weg und versteckt sich (hides) im Wald. Sie kann gut mit Pfeil und Bogen (bow and arrow) umgehen (handle).",
+    "So überlebt sie. Peeta scheint sich mit den starken Spielern verbündet zu haben (to have allied). Doch später findet Katniss heraus, dass Peeta nur überleben wollte (wanted to survive) – und sie vielleicht wirklich liebt.",
+    "Katniss lernt ein Mädchen namens Rue kennen. Rue ist klein, klug und freundlich. Sie erinnert Katniss an ihre Schwester.",
+    "Die beiden arbeiten zusammen. Sie zerstören die Vorräte der anderen Tribute. Doch Rue wird getötet.",
+    "Katniss ist sehr traurig. Sie legt Blumen auf Rues Körper und singt für sie. Viele Menschen sehen das im Fernsehen. Es ist ein stiller Protest gegen das Kapitol.",
+    "Dann sagen die Spielemacher, dass es zwei Sieger geben darf, wenn sie aus dem gleichen Distrikt kommen. Katniss sucht Peeta und findet ihn verletzt. Sie versteckt ihn in einer Höhle und pflegt ihn.",
+    "Sie tut so, als ob sie ihn liebt – vielleicht ist es nicht nur gespielt. Zusammen versuchen sie, zu überleben. Es gibt viele Gefahren (dangers).",
+    "Am Ende bleiben nur noch Katniss, Peeta und ein weiterer Tribut übrig (remain). Sie schaffen es, den letzten Gegner zu besiegen (defeat). Doch dann sagen die Spielemacher (game makers): Es darf doch nur einen Sieger geben.",
+    "Katniss und Peeta weigern sich (refuse), sich gegenseitig zu töten. Sie wollen zusammen giftige (poisonous) Beeren (berries) essen und gemeinsam sterben. Das Kapitol will das nicht und erklärt sie beide zu Siegern (winners).",
+    "Katniss und Peeta haben überlebt. Doch das Kapitol ist wütend. Katniss hat sich widersetzt (resisted) – das ist gefährlich.",
+    "Präsident Snow, der Anführer von Panem (leader of Panem), sieht in ihr eine Gefahr. Sie könnte ein Symbol für den Widerstand (resistance) sein. Katniss kehrt nach Hause zurück (returns home).",
+    "Doch sie weiß: Die Hungerspiele waren erst der Anfang. Ein größerer Kampf steht bevor."
+];
+
+
+  const quizFragen = [
+    { frage: "Was bedeutet 'are governed by'?", antworten: ["A) werden regiert von", "B) werden gebaut von", "C) werden gesehen von"], korrekt: 0 },
+    { frage: "Was bedeutet 'powerful'?", antworten: ["A) freundlich", "B) mächtig", "C) neugierig"], korrekt: 1 },
+    { frage: "Was bedeutet 'fought'?", antworten: ["A) getanzt", "B) gehofft", "C) gekämpft"], korrekt: 2 },
+    { frage: "Was bedeutet 'war'?", antworten: ["A) Krieg", "B) Wind", "C) Traum"], korrekt: 0 },
+    { frage: "Was bedeutet 'as punishment'?", antworten: ["A) zur Überraschung", "B) zur Strafe", "C) zur Belohnung"], korrekt: 1 },
+    { frage: "Was bedeutet 'Hunger Games'?", antworten: ["A) Hungerspiele", "B) Sportspiele", "C) Kochduell"], korrekt: 0 },
+    { frage: "Was bedeutet 'send'?", antworten: ["A) holen", "B) schicken", "C) lesen"], korrekt: 1 },
+    { frage: "Was bedeutet 'fight each other'?", antworten: ["A) zusammenarbeiten", "B) gegeneinander kämpfen", "C) sich grüßen"], korrekt: 1 },
+    { frage: "Was bedeutet 'shows the games'?", antworten: ["A) versteckt die Spiele", "B) beginnt die Spiele", "C) zeigt die Spiele"], korrekt: 2 },
+    { frage: "Was bedeutet 'on television'?", antworten: ["A) im Radio", "B) im Fernsehen", "C) im Kino"], korrekt: 1 },
+    { frage: "Was bedeutet 'cruel show'?", antworten: ["A) traurige Sendung", "B) grausame Show", "C) spannende Serie"], korrekt: 1 },
+    { frage: "Was bedeutet 'one of the poorest'?", antworten: ["A) einer der ärmsten", "B) einer der größten", "C) einer der ruhigsten"], korrekt: 0 },
+    { frage: "Was bedeutet 'takes care of'?", antworten: ["A) kümmert sich um", "B) versteckt sich vor", "C) hört auf"], korrekt: 0 },
+    { frage: "Was bedeutet 'hunt'?", antworten: ["A) schwimmen", "B) jagen", "C) backen"], korrekt: 1 },
+    { frage: "Was bedeutet 'forbidden'?", antworten: ["A) verboten", "B) vergessen", "C) erlaubt"], korrekt: 0 },
+    { frage: "Was bedeutet 'meat'?", antworten: ["A) Milch", "B) Fleisch", "C) Wasser"], korrekt: 1 },
+    { frage: "Was bedeutet 'sells it'?", antworten: ["A) isst es", "B) verkauft es", "C) kocht es"], korrekt: 1 },
+    { frage: "Was bedeutet 'starves'?", antworten: ["A) hungert", "B) schläft", "C) spricht"], korrekt: 0 },
+    { frage: "Was bedeutet 'get along well'?", antworten: ["A) lachen oft", "B) verstehen sich gut", "C) leben zusammen"], korrekt: 1 },
+    { frage: "Was bedeutet 'dream of fleeing'?", antworten: ["A) träumen vom Kämpfen", "B) träumen vom Fliegen", "C) träumen davon zu fliehen"], korrekt: 2 },
+    { frage: "Was bedeutet 'reaping'?", antworten: ["A) Ernte", "B) Jagd", "C) Spielbeginn"], korrekt: 0 },
+    { frage: "Was bedeutet 'drawn by lot'?", antworten: ["A) ausgewählt", "B) ausgelost", "C) gezeichnet"], korrekt: 1 },
+    { frage: "Was bedeutet 'takes part for the first time'?", antworten: ["A) läuft zum ersten Mal", "B) kämpft zum ersten Mal", "C) nimmt zum ersten Mal teil"], korrekt: 2 },
+    { frage: "Was bedeutet 'slip'?", antworten: ["A) Zettel", "B) Stift", "C) Buch"], korrekt: 0 },
+    { frage: "Was bedeutet 'drawing bowl'?", antworten: ["A) Glücksrad", "B) Lostopf", "C) Würfel"], korrekt: 1 },
+    { frage: "Was bedeutet 'is drawn'?", antworten: ["A) wird gezogen", "B) wird verloren", "C) wird gelesen"], korrekt: 0 },
+    { frage: "Was bedeutet 'voluntarily'?", antworten: ["A) freiwillig", "B) mutig", "C) plötzlich"], korrekt: 0 },
+    { frage: "Was bedeutet 'dies'?", antworten: ["A) weint", "B) stirbt", "C) lacht"], korrekt: 1 },
+    { frage: "Was bedeutet 'is chosen'?", antworten: ["A) ist gefallen", "B) ist genannt", "C) ist ausgewählt worden"], korrekt: 2 },
+    { frage: "Was bedeutet 'remembers'?", antworten: ["A) erinnert sich", "B) erzählt", "C) fragt"], korrekt: 0 },
+    { frage: "Was bedeutet 'starved'?", antworten: ["A) gefroren", "B) verhungert", "C) gewartet"], korrekt: 1 },
+    { frage: "Was bedeutet 'secretly'?", antworten: ["A) leise", "B) heimlich", "C) höflich"], korrekt: 1 },
+    { frage: "Was bedeutet 'grateful'?", antworten: ["A) müde", "B) dankbar", "C) freundlich"], korrekt: 1 },
+    { frage: "Was bedeutet 'taken'?", antworten: ["A) gebracht", "B) gebacken", "C) gebaut"], korrekt: 0 },
+    { frage: "Was bedeutet 'clothes'?", antworten: ["A) Kleider", "B) Schuhe", "C) Hüte"], korrekt: 0 },
+    { frage: "Was bedeutet 'should behave'?", antworten: ["A) sollen zuhören", "B) sollen benehmen", "C) sollen essen"], korrekt: 1 },
+    { frage: "Was bedeutet 'traps'?", antworten: ["A) Fallen", "B) Seile", "C) Messer"], korrekt: 0 },
+    { frage: "Was bedeutet 'thirst'?", antworten: ["A) Hitze", "B) Durst", "C) Müdigkeit"], korrekt: 1 },
+    { frage: "Was bedeutet 'hides'?", antworten: ["A) versteckt sich", "B) rennt weg", "C) ruft"], korrekt: 0 },
+    { frage: "Was bedeutet 'bow and arrow'?", antworten: ["A) Schild und Schwert", "B) Pfeil und Bogen", "C) Helm und Rüstung"], korrekt: 1 },
+    { frage: "Was bedeutet 'handle'?", antworten: ["A) werfen", "B) umgehen", "C) bauen"], korrekt: 1 },
+    { frage: "Was bedeutet 'to have allied'?", antworten: ["A) gegrüßt haben", "B) verbündet zu haben", "C) versteckt zu haben"], korrekt: 1 },
+    { frage: "Was bedeutet 'wanted to survive'?", antworten: ["A) wollte überleben", "B) wollte angreifen", "C) wollte weinen"], korrekt: 0 },
+    { frage: "Was bedeutet 'dangers'?", antworten: ["A) Geräusche", "B) Gefahren", "C) Schatten"], korrekt: 1 },
+    { frage: "Was bedeutet 'remain'?", antworten: ["A) singen", "B) übrig bleiben", "C) fallen"], korrekt: 1 },
+    { frage: "Was bedeutet 'defeat'?", antworten: ["A) besiegen", "B) fliehen", "C) helfen"], korrekt: 0 },
+    { frage: "Was bedeutet 'game makers'?", antworten: ["A) Spielmacher", "B) Zuschauer", "C) Trainer"], korrekt: 0 },
+    { frage: "Was bedeutet 'refuse'?", antworten: ["A) schreien", "B) weinen", "C) weigern sich"], korrekt: 2 },
+    { frage: "Was bedeutet 'poisonous'?", antworten: ["A) süß", "B) giftig", "C) bitter"], korrekt: 1 },
+    { frage: "Was bedeutet 'berries'?", antworten: ["A) Beeren", "B) Nüsse", "C) Samen"], korrekt: 0 },
+    { frage: "Was bedeutet 'winners'?", antworten: ["A) Verlierer", "B) Spieler", "C) Sieger"], korrekt: 2 },
+    { frage: "Was bedeutet 'resisted'?", antworten: ["A) sich widersetzt", "B) sich bedankt", "C) sich verletzt"], korrekt: 0 },
+    { frage: "Was bedeutet 'leader of Panem'?", antworten: ["A) König von Panem", "B) Anführer von Panem", "C) Bürgermeister von Panem"], korrekt: 1 },
+    { frage: "Was bedeutet 'resistance'?", antworten: ["A) Angriff", "B) Widerstand", "C) Hoffnung"], korrekt: 1 },
+    { frage: "Was bedeutet 'returns home'?", antworten: ["A) kehrt nach Hause zurück", "B) geht zur Schule", "C) flieht aus dem Land"], korrekt: 0 }
+];
+
+        let currentIndex = 0;
+        let quizIndex = 0;
+        let richtigeAntworten = 0;
+
+        document.getElementById("text").innerHTML = textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
+
+        document.getElementById("nextButton").addEventListener("click", function() {
+            if (currentIndex < textAbschnitte.length - 1) {
+                currentIndex++;
+                document.getElementById("text").innerHTML = textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
+            } else {
+                document.getElementById("textContainer").style.display = "none";
+                document.querySelector(".controls").style.display = "none";
+                document.getElementById("quizContainer").style.display = "block";
+                ladeFrage();
+            }
+        });
+
+        document.getElementById("prevButton").addEventListener("click", function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                document.getElementById("text").innerHTML = textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
+            }
+        });
+
+        function ladeFrage() {
+            if (quizIndex < quizFragen.length) {
+                document.getElementById("question").innerText = quizFragen[quizIndex].frage;
+                const answerContainer = document.getElementById("answers");
+                answerContainer.innerHTML = "";
+
+                quizFragen[quizIndex].antworten.forEach((antwort, index) => {
+                    let button = document.createElement("button");
+                    button.innerText = antwort;
+                    button.classList.add("answer");
+                    button.addEventListener("click", function () {
+                        if (index === quizFragen[quizIndex].korrekt) {
+                            button.classList.add("correct");
+                            richtigeAntworten++;
+                        } else {
+                            button.classList.add("wrong");
+                        }
+                        Array.from(answerContainer.children).forEach(btn => btn.disabled = true);
+                    });
+                    answerContainer.appendChild(button);
+                });
+            } else {
+                zeigeErgebnis();
+            }
+        }
+
+        document.getElementById("nextQuestion").addEventListener("click", function () {
+            quizIndex++;
+            if (quizIndex < quizFragen.length) {
+                ladeFrage();
+            } else {
+                zeigeErgebnis();
+            }
+        });
+
+        function zeigeErgebnis() {
+            document.getElementById("quizContainer").style.display = "none";
+            document.getElementById("resultContainer").style.display = "block";
+            document.getElementById("score").innerText = `Du hast ${richtigeAntworten} von ${quizFragen.length} Fragen richtig beantwortet.`;
+        }
+    </script>
+</body>
+</html>
