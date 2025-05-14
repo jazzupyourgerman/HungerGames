@@ -1,139 +1,162 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hörverständnis & Quiz</title>
-
-
-
-
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hörverständnis & Quiz</title>
+  <style>
     body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
     .text-container, .quiz-container, .result-container {
-        max-width: 600px;
-        margin: 20px auto;
-        font-size: 18px;
+      max-width: 600px;
+      margin: 20px auto;
+      font-size: 18px;
     }
     .controls { margin-top: 10px; }
     button { font-size: 16px; padding: 10px; margin: 5px; cursor: pointer; }
-    .quiz-container { display: none; }
-    .result-container { display: none; }
+    .quiz-container, .result-container { display: none; }
     .question { font-weight: bold; }
-    .answer { display: block; margin: 5px; padding: 10px; cursor: pointer; border: 1px solid #000; }
+    .answer {
+      display: block; margin: 5px; padding: 10px;
+      cursor: pointer; border: 1px solid #000;
+    }
     .correct { background-color: lightgreen; }
     .wrong { background-color: lightcoral; }
     .blue-text { color: blue; font-weight: bold; }
     .icon-links img {
-        width: 50px;
-        height: 50px;
-        margin: 10px;
-        cursor: pointer;
+      width: 50px; height: 50px; margin: 10px; cursor: pointer;
     }
-
-    /* 🎉 NEUES CSS für Call-to-Action Texte */
     .icon-links a {
-        display: inline-block;
-        text-decoration: none;
-        color: black;
-        text-align: center;
-        margin: 10px;
+      display: inline-block; text-decoration: none;
+      color: black; text-align: center; margin: 10px;
     }
-
     .icon-links p {
-        margin: 5px 0 0;
-        font-size: 14px;
+      margin: 5px 0 0; font-size: 14px;
     }
-</style>
-
-
-
-
-
+    #progressContainer, #quizProgressContainer {
+      margin-bottom: 15px; text-align: center;
+    }
+    .progress-bar-background {
+      background-color: #ddd; height: 10px;
+      width: 100%; border-radius: 5px;
+    }
+    .progress-bar-fill {
+      height: 10px; background-color: #4caf50;
+      border-radius: 5px; width: 0%;
+    }
+    #goToQuizButton {
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+    .quiz-buttons {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .zurueck-button {
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <h2>Hörverständnis: "Hunger Games"</h2>
-    
-    <iframe id="soundcloudPlayer" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
-        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2095607442&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false">
-    </iframe>
-    
-    <div class="text-container" id="textContainer">
-        <p id="text"></p>
+  <h2>Hörverständnis: "Hunger Games"</h2>
+
+  <iframe id="soundcloudPlayer" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
+    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2095607442&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false">
+  </iframe>
+
+  <div id="progressContainer">
+    <div class="progress-bar-background">
+      <div id="progressBar" class="progress-bar-fill"></div>
     </div>
-    
-    <div class="controls">
-        <button id="prevButton">⬅️ Zurück</button>
-        <button id="nextButton">Weiter ➡️</button>
+  </div>
+
+  <div class="text-container" id="textContainer">
+    <p id="text"></p>
+  </div>
+
+  <div class="controls">
+    <button id="prevButton">⬅️ Zurück</button>
+    <button id="nextButton">Weiter ➡️</button>
+    <button id="goToQuizButton">Zum Quiz</button>
+  </div>
+
+  <div class="quiz-container" id="quizContainer">
+    <div id="quizProgressContainer">
+      <div class="progress-bar-background">
+        <div id="quizProgressBar" class="progress-bar-fill"></div>
+      </div>
     </div>
-    
-    <div class="quiz-container" id="quizContainer">
-        <p class="question" id="question"></p>
-        <div id="answers"></div>
+    <p class="question" id="question"></p>
+    <div id="answers"></div>
+    <div class="quiz-buttons">
+      <button class="zurueck-button" id="zurueckZumTextButton">⬅️ Zurück zum Text</button>
+      <div>
+        <button id="prevQuestion">Vorherige Frage</button>
         <button id="nextQuestion">Nächste Frage ➡️</button>
+      </div>
     </div>
+  </div>
 
-
-
-<div class="result-container" id="resultContainer">
+  <div class="result-container" id="resultContainer">
     <h3>Test abgeschlossen!</h3>
     <p id="score"></p>
     <div class="icon-links">
-        <a href="https://www.jazzupyougerman.com" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/100/000000/domain.png" alt="Webseite">
-            <p>➡️ Go to website</p>
-        </a>
-        <br>
-        <a href="https://www.instagram.com/jazzupyourgerman" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/100/000000/instagram-new.png" alt="Instagram">
-            <p>➡️ Follow JAZZ UP YOUR GERMAN on Instagram!</p>
-        </a>
+      <a href="https://www.jazzupyougerman.com" target="_blank">
+        <img src="https://img.icons8.com/ios-filled/100/000000/domain.png" alt="Webseite"/>
+        <p>➡️ Go to website</p>
+      </a><br>
+      <a href="https://www.instagram.com/jazzupyourgerman" target="_blank">
+        <img src="https://img.icons8.com/ios-filled/100/000000/instagram-new.png" alt="Instagram"/>
+        <p>➡️ Follow JAZZ UP YOUR GERMAN on Instagram!</p>
+      </a>
     </div>
-</div>
+  </div>
 
-
-
-
-
-<script>
+  <script>
 const textAbschnitte = [
-  "In einem Land namens Panem (called Panem) leben die Menschen in zwölf Distrikten. Diese Distrikte werden vom Kapitol regiert (are governed by). Das Kapitol ist reich und mächtig (powerful). Im Kapitol wohnen die reichen Leute, die alles haben, was sie wollen. Die Menschen in den Distrikten leben dagegen in Armut. Sie müssen hart arbeiten und bekommen kaum genug zu essen.",
+  "In einem Land namens Panem leben die Menschen in zwölf Distrikten. Diese Distrikte werden vom Kapitol regiert (are governed by the Capitol). Das Kapitol ist reich und mächtig (rich and powerful). Die Distrikte sind arm (poor). Früher gab es einen Krieg, weil die Distrikte gegen das Kapitol gekämpft haben (fought against the Capitol).",
 
-  "Früher gab es einen Krieg (war), weil die Distrikte gegen das Kapitol gekämpft haben (fought). Das Kapitol hat den Krieg gewonnen. Zur Strafe (as punishment) hat das Kapitol die Distrikte streng kontrolliert. Viele Menschen haben ihr Zuhause verloren. Die Angst vor dem Kapitol ist überall spürbar. Niemand darf frei sprechen oder das Land verlassen.",
+  "Das Kapitol hat den Krieg gewonnen (won the war). Zur Strafe müssen die Distrikte jedes Jahr zwei Kinder in die sogenannten Hungerspiele schicken (send two children to the Hunger Games): ein Mädchen und einen Jungen (a girl and a boy). Diese Kinder heißen „Tribute“ (are called “tributes”). In einer großen Arena müssen sie gegeneinander kämpfen (have to fight against each other) – bis nur noch ein Kind lebt (until only one child is left alive).",
 
-  "Jedes Jahr müssen die Distrikte zwei Kinder in die sogenannten Hungerspiele (Hunger Games) schicken (send): ein Mädchen und einen Jungen. Diese Kinder heißen „Tribute“. In einer großen Arena müssen sie gegeneinander kämpfen (fight each other) – bis nur noch ein Kind lebt. Die Hungerspiele sind eine grausame (cruel) Show. Niemand kann sich dagegen wehren. Es ist ein Zeichen der Macht des Kapitols.",
+  "Das Kapitol zeigt die Spiele im Fernsehen (shows the games on TV). Es ist eine grausame Show (a cruel show). Katniss Everdeen ist sechzehn Jahre alt (sixteen years old). Sie lebt in Distrikt 12, einem der ärmsten Distrikte (one of the poorest districts). Ihr Vater ist tot (dead).",
 
-  "Das Kapitol zeigt (shows) die Spiele im Fernsehen (on television). Für die Menschen im Kapitol ist das Unterhaltung. Für die Familien in den Distrikten ist es schrecklich. Katniss Everdeen ist sechzehn Jahre alt. Sie lebt in Distrikt 12, einem der ärmsten (one of the poorest) Distrikte. Dort gibt es wenig zu essen und harte Arbeit in den Kohleminen.",
+  "Seitdem sorgt Katniss für ihre Mutter und ihre kleine Schwester Prim (has taken care of her mother and little sister). Katniss geht oft in den Wald, um Tiere zu jagen (to hunt animals). Das ist eigentlich verboten (actually forbidden), aber sie braucht das Fleisch und verkauft es (meat and sells it) für ihre Familie. Ihr bester Freund ist Gale (her best friend is Gale).",
 
-  "Ihr Vater ist tot. Seitdem sorgt (takes care of) Katniss für ihre Mutter und ihre kleine Schwester Prim. Die Mutter ist nach dem Tod des Vaters sehr traurig und spricht kaum noch. Katniss geht oft in den Wald, um Tiere zu jagen (hunt). Das ist eigentlich verboten (forbidden), aber sie braucht das Fleisch (meat) für ihre Familie. Außerdem verkauft sie es (sells it) auf dem Schwarzmarkt.",
+  "Auch er geht jagen (he hunts, too). Sie verstehen sich gut (get along well) und träumen davon, aus dem Distrikt zu fliehen (dream of escaping from the district). Doch sie wissen, dass das nicht möglich ist (it’s not possible). Dann kommt der Tag der Ernte (the day of the reaping). An diesem Tag werden die Tribute für die Hungerspiele ausgelost (the tributes are drawn by lots).",
 
-  "Ihr bester Freund ist Gale. Auch er geht jagen. Sie verstehen sich gut (get along well) und träumen davon, aus dem Distrikt zu fliehen (dream of fleeing). Doch sie wissen, dass das nicht möglich ist. Überall gibt es Zäune und Kameras. Trotzdem sprechen sie oft über eine bessere Zukunft. Es ist das Einzige, was ihnen Hoffnung gibt.",
+  "Katniss hat große Angst um ihre kleine Schwester (is very afraid for her little sister). Prim ist erst zwölf und nimmt zum ersten Mal teil (only twelve and takes part for the first time). Sie hat nur einen Zettel im Lostopf (only one slip in the pot). Aber genau dieser Zettel wird gezogen (but that slip is chosen): Primrose Everdeen. Katniss ist schockiert (is shocked).",
 
-  "Dann kommt der Tag der Ernte (reaping). An diesem Tag werden die Tribute für die Hungerspiele ausgelost (drawn by lot). Alle Kinder zwischen zwölf und achtzehn Jahren müssen kommen. Katniss hat große Angst um (fears for) ihre kleine Schwester. Prim ist erst zwölf und nimmt zum ersten Mal teil (takes part for the first time). Sie hat nur einen Zettel (slip) im Lostopf (drawing bowl).",
+  "Sie schreit laut, dass sie freiwillig antritt (shouts that she volunteers). Sie will nicht, dass Prim stirbt (doesn’t want Prim to die). So wird Katniss das Mädchen, das an den Spielen teilnehmen muss (becomes the girl who has to take part in the Games). Der Junge, der mit ihr ausgewählt wird, ist Peeta Mellark (the boy chosen with her is Peeta Mellark), der Sohn eines Bäckers (the son of a baker).",
 
-  "Aber genau dieser Zettel wird gezogen (is drawn): Primrose Everdeen. Katniss ist schockiert. Sie schreit laut (shouts loudly), dass sie freiwillig (voluntarily) antritt (steps in). Sie will nicht, dass Prim stirbt (dies). Damit ist Katniss die erste, die sich freiwillig meldet. Das Publikum ist still und beeindruckt.",
+  "Katniss erinnert sich an Peeta (remembers Peeta). Als sie einmal fast verhungert ist (was almost starving once), hat Peeta ihr heimlich Brot gegeben (secretly gave her bread). Seitdem ist sie ihm dankbar (has been thankful to him since then). Doch nun ist er ihr Gegner in den Spielen (now he is her opponent in the Games). Beide werden ins Kapitol gebracht (are taken to the Capitol).",
 
-  "So wird Katniss das Mädchen, das an den Spielen teilnehmen muss. Der Junge, der mit ihr ausgewählt wird (is chosen), ist Peeta Mellark, der Sohn eines Bäckers. Katniss erinnert sich (remembers) an Peeta. Als sie einmal fast verhungert ist (starved), hat Peeta ihr heimlich (secretly) Brot gegeben. Seitdem ist sie ihm dankbar (grateful). Doch nun sind sie Gegner.",
+  "Dort bekommen sie neue Kleider (get new clothes), lernen zu kämpfen (learn to fight) und werden im Fernsehen gezeigt (are shown on TV). Ihr Mentor ist Haymitch (their mentor is Haymitch), ein älterer Mann (an older man), der früher selbst die Spiele gewonnen hat (who once won the Games himself). Er trinkt viel (drinks a lot), aber er kennt das Spiel gut (but knows the game well).",
 
-  "Beide werden ins Kapitol gebracht (taken). Dort bekommen sie neue Kleider (clothes), lernen zu kämpfen und werden im Fernsehen gezeigt. Ihr Mentor ist Haymitch, ein älterer Mann, der früher selbst die Spiele gewonnen hat. Er trinkt viel, aber er kennt das Spiel gut. Er sagt, dass Katniss und Peeta sich wie ein verliebtes Paar benehmen sollen (should behave). Dann mögen die Leute sie mehr.",
+  "Er sagt, dass Katniss und Peeta sich wie ein verliebtes Paar benehmen sollen (says they should act like a couple in love). Dann mögen die Leute sie mehr (then people will like them more) und schicken ihnen vielleicht Essen oder Medizin in die Arena (and maybe send them food or medicine in the arena). Die Arena ist ein gefährlicher Ort (dangerous place).",
 
-  "Vielleicht schicken ihnen die Zuschauer dann Essen oder Medizin in die Arena. Diese Geschenke können Leben retten. Katniss und Peeta müssen sich in der Öffentlichkeit gut präsentieren. Im Training zeigen sie ihre Stärken. Katniss ist gut mit Pfeil und Bogen (bow and arrow) und Peeta hat viel Kraft. Beide wollen überleben.",
+  "Es gibt dort viele Fallen (many traps), wilde Tiere (wild animals), Hunger und Durst (hunger and thirst). Und natürlich die anderen Kinder, die kämpfen (and of course the other children who fight). Direkt am Anfang sterben viele (many die right at the beginning). Katniss läuft weg und versteckt sich (runs away and hides) im Wald. Dort kennt sie sich gut aus (is familiar with the forest).",
 
-  "Die Arena ist ein gefährlicher Ort. Es gibt dort viele Fallen (traps), wilde Tiere, Hunger und Durst (thirst). Und natürlich die anderen Kinder, die kämpfen. Direkt am Anfang sterben viele. Katniss läuft weg und versteckt sich (hides) im Wald. Dort kennt sie sich gut aus.",
+  "Sie kann gut mit Pfeil und Bogen umgehen (is good with bow and arrow). So überlebt sie die ersten Tage (survives the first days). Peeta scheint sich mit den starken Spielern verbündet zu haben (seems to have allied with the strong players). Doch später findet Katniss heraus, dass Peeta nur überleben wollte (just wanted to survive) – und sie vielleicht wirklich liebt (and maybe really loves her).",
 
-  "Sie kann gut mit Pfeil und Bogen umgehen (handle). So überlebt sie die ersten Tage. Peeta scheint sich mit den starken Spielern verbündet zu haben (to have allied). Katniss versteht das nicht. Doch später findet Katniss heraus, dass Peeta nur überleben wollte (wanted to survive). Vielleicht liebt er sie wirklich.",
+  "Katniss lernt ein Mädchen namens Rue kennen (meets a girl named Rue). Rue ist klein, klug und freundlich (small, smart and kind). Sie erinnert Katniss an ihre Schwester (reminds Katniss of her sister). Die beiden arbeiten zusammen (work together). Sie zerstören die Vorräte der anderen Tribute (destroy the other tributes’ supplies).",
 
-  "Katniss lernt ein Mädchen namens Rue kennen. Rue ist klein, klug und freundlich. Sie erinnert Katniss an ihre Schwester. Die beiden arbeiten zusammen. Sie zerstören die Vorräte der anderen Tribute. Doch Rue wird getötet.",
+  "Doch Rue wird getötet (but Rue is killed). Katniss ist sehr traurig (is very sad). Sie legt Blumen auf Rues Körper und singt für sie (lays flowers on Rue’s body and sings for her). Viele Menschen sehen das im Fernsehen (many people see this on TV). Es ist ein stiller Protest gegen das Kapitol (a silent protest against the Capitol).",
 
-  "Katniss ist sehr traurig. Sie legt Blumen auf Rues Körper und singt für sie. Viele Menschen sehen das im Fernsehen. Es ist ein stiller Protest gegen das Kapitol. Zum ersten Mal spüren die Zuschauer Hoffnung. Katniss wird zum Symbol für Mut.",
+  "Dann sagen die Spielemacher, dass es zwei Sieger geben darf, wenn sie aus dem gleichen Distrikt kommen (there can be two winners if from the same district). Katniss sucht Peeta und findet ihn verletzt (looks for Peeta and finds him wounded). Sie versteckt ihn in einer Höhle und pflegt ihn (hides him in a cave and takes care of him).",
 
-  "Dann sagen die Spielemacher, dass es zwei Sieger geben darf, wenn sie aus dem gleichen Distrikt kommen. Katniss sucht Peeta und findet ihn verletzt. Sie versteckt ihn in einer Höhle und pflegt ihn. Sie tut so, als ob sie ihn liebt – vielleicht ist es nicht nur gespielt. Zusammen versuchen sie, zu überleben. Es gibt viele Gefahren (dangers).",
+  "Sie tut so, als ob sie ihn liebt (pretends to love him) – vielleicht ist es nicht nur gespielt (maybe it’s not just pretend). Zusammen versuchen sie, zu überleben (together they try to survive). Es gibt viele Gefahren (many dangers). Am Ende bleiben nur noch Katniss, Peeta und ein weiterer Tribut übrig (only Katniss, Peeta and one more tribute remain).",
 
-  "Am Ende bleiben nur noch Katniss, Peeta und ein weiterer Tribut übrig (remain). Sie schaffen es, den letzten Gegner zu besiegen (defeat). Doch dann sagen die Spielemacher (game makers): Es darf doch nur einen Sieger geben. Katniss und Peeta weigern sich (refuse), sich gegenseitig zu töten. Sie wollen zusammen giftige (poisonous) Beeren (berries) essen und gemeinsam sterben.",
+  "Sie schaffen es, den letzten Gegner zu besiegen (manage to defeat the last opponent). Doch dann sagen die Spielemacher: Es darf doch nur einen Sieger geben (there can only be one winner). Katniss und Peeta weigern sich (refuse), sich gegenseitig zu töten (to kill each other). Sie wollen zusammen giftige Beeren essen und gemeinsam sterben (eat poisonous berries and die together).",
 
-  "Das Kapitol will das nicht und erklärt sie beide zu Siegern (winners). Katniss und Peeta haben überlebt. Doch das Kapitol ist wütend. Katniss hat sich widersetzt (resisted) – das ist gefährlich. Präsident Snow, der Anführer von Panem (leader of Panem), sieht in ihr eine Gefahr. Sie könnte ein Symbol für den Widerstand (resistance) sein.",
+  "Das Kapitol will das nicht und erklärt sie beide zu Siegern (declares them both winners). Katniss und Peeta haben überlebt (have survived). Doch das Kapitol ist wütend (but the Capitol is angry). Katniss hat sich widersetzt (resisted) – das ist gefährlich (that’s dangerous). Präsident Snow, der Anführer von Panem (the leader of Panem), sieht in ihr eine Gefahr (sees her as a threat).",
 
-  "Katniss kehrt nach Hause zurück (returns home). Doch sie weiß: Die Hungerspiele waren erst der Anfang. Ein größerer Kampf steht bevor. In den Distrikten beginnt Unruhe. Die Menschen haben Hoffnung. Katniss muss sich entscheiden, wie es weitergeht."
+  "Katniss kehrt nach Hause zurück (returns home). Doch sie weiß: Die Hungerspiele waren erst der Anfang (the Hunger Games were just the beginning). Ein größerer Kampf steht bevor (a bigger fight is coming). In den Distrikten beginnt Unruhe (unrest begins in the districts). Die Menschen haben Hoffnung (people have hope). Katniss muss sich entscheiden, wie es weitergeht (Katniss has to decide what comes next)."
 ];
 
 
@@ -196,71 +219,112 @@ const textAbschnitte = [
     { frage: "Was bedeutet 'returns home'?", antworten: ["A) kehrt nach Hause zurück", "B) geht zur Schule", "C) flieht aus dem Land"], korrekt: 0 }
 ];
 
-        let currentIndex = 0;
-        let quizIndex = 0;
-        let richtigeAntworten = 0;
 
-        document.getElementById("text").innerHTML = textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
+let currentIndex = 0;
+let quizIndex = 0;
+let richtigeAntworten = 0;
 
-        document.getElementById("nextButton").addEventListener("click", function() {
-            if (currentIndex < textAbschnitte.length - 1) {
-                currentIndex++;
-                document.getElementById("text").innerHTML = textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
-            } else {
-                document.getElementById("textContainer").style.display = "none";
-                document.querySelector(".controls").style.display = "none";
-                document.getElementById("quizContainer").style.display = "block";
-                ladeFrage();
-            }
-        });
+function updateTextProgress() {
+  const percent = ((currentIndex + 1) / textAbschnitte.length) * 100;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
 
-        document.getElementById("prevButton").addEventListener("click", function() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                document.getElementById("text").innerHTML = textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
-            }
-        });
+function ladeText() {
+  document.getElementById("text").innerHTML =
+    textAbschnitte[currentIndex].replace(/\(([^)]+)\)/g, '<span class="blue-text">($1)</span>');
+  updateTextProgress();
 
-        function ladeFrage() {
-            if (quizIndex < quizFragen.length) {
-                document.getElementById("question").innerText = quizFragen[quizIndex].frage;
-                const answerContainer = document.getElementById("answers");
-                answerContainer.innerHTML = "";
+  if (currentIndex >= textAbschnitte.length - 1) {
+    document.getElementById("nextButton").style.display = "none";
+  } else {
+    document.getElementById("nextButton").style.display = "inline-block";
+  }
+}
 
-                quizFragen[quizIndex].antworten.forEach((antwort, index) => {
-                    let button = document.createElement("button");
-                    button.innerText = antwort;
-                    button.classList.add("answer");
-                    button.addEventListener("click", function () {
-                        if (index === quizFragen[quizIndex].korrekt) {
-                            button.classList.add("correct");
-                            richtigeAntworten++;
-                        } else {
-                            button.classList.add("wrong");
-                        }
-                        Array.from(answerContainer.children).forEach(btn => btn.disabled = true);
-                    });
-                    answerContainer.appendChild(button);
-                });
-            } else {
-                zeigeErgebnis();
-            }
+ladeText();
+
+document.getElementById("nextButton").addEventListener("click", () => {
+  if (currentIndex < textAbschnitte.length - 1) {
+    currentIndex++;
+    ladeText();
+  }
+});
+
+document.getElementById("prevButton").addEventListener("click", () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    ladeText();
+  }
+});
+
+document.getElementById("goToQuizButton").addEventListener("click", () => {
+  document.getElementById("textContainer").style.display = "none";
+  document.querySelector(".controls").style.display = "none";
+  document.getElementById("progressContainer").style.display = "none";
+  document.getElementById("quizContainer").style.display = "block";
+  ladeFrage();
+});
+
+function ladeFrage() {
+  if (quizIndex < quizFragen.length) {
+    document.getElementById("question").innerText = quizFragen[quizIndex].frage;
+    document.getElementById("quizProgressBar").style.width =
+      ((quizIndex + 1) / quizFragen.length) * 100 + "%";
+
+    const answerContainer = document.getElementById("answers");
+    answerContainer.innerHTML = "";
+
+    quizFragen[quizIndex].antworten.forEach((antwort, index) => {
+      const button = document.createElement("button");
+      button.innerText = antwort;
+      button.classList.add("answer");
+      button.addEventListener("click", () => {
+        if (index === quizFragen[quizIndex].korrekt) {
+          button.classList.add("correct");
+          richtigeAntworten++;
+        } else {
+          button.classList.add("wrong");
         }
+        Array.from(answerContainer.children).forEach(btn => btn.disabled = true);
+      });
+      answerContainer.appendChild(button);
+    });
+  } else {
+    zeigeErgebnis();
+  }
+}
 
-        document.getElementById("nextQuestion").addEventListener("click", function () {
-            quizIndex++;
-            if (quizIndex < quizFragen.length) {
-                ladeFrage();
-            } else {
-                zeigeErgebnis();
-            }
-        });
+document.getElementById("nextQuestion").addEventListener("click", () => {
+  if (quizIndex < quizFragen.length - 1) {
+    quizIndex++;
+    ladeFrage();
+  } else {
+    zeigeErgebnis();
+  }
+});
 
-        function zeigeErgebnis() {
-            document.getElementById("quizContainer").style.display = "none";
-            document.getElementById("resultContainer").style.display = "block";
-            document.getElementById("score").innerText = `Du hast ${richtigeAntworten} von ${quizFragen.length} Fragen richtig beantwortet.`;
-        }
-    </script>
+document.getElementById("prevQuestion").addEventListener("click", () => {
+  if (quizIndex > 0) {
+    quizIndex--;
+    ladeFrage();
+  }
+});
+
+document.getElementById("zurueckZumTextButton").addEventListener("click", () => {
+  document.getElementById("quizContainer").style.display = "none";
+  document.getElementById("textContainer").style.display = "block";
+  document.querySelector(".controls").style.display = "block";
+  document.getElementById("progressContainer").style.display = "block";
+  ladeText();
+  updateTextProgress();
+});
+
+function zeigeErgebnis() {
+  document.getElementById("quizContainer").style.display = "none";
+  document.getElementById("resultContainer").style.display = "block";
+  document.getElementById("score").innerText =
+    `Du hast ${richtigeAntworten} von ${quizFragen.length} Fragen richtig beantwortet.`;
+}
+  </script>
 </body>
 </html>
