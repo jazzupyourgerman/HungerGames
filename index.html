@@ -162,9 +162,9 @@
     <p class="question" id="question"></p>
     <div id="answers"></div>
     <div class="quiz-buttons">
-      <button class="zurueck-button" id="zurueckZumTextButton">⬅️ Zurück zum Text</button>
+      <button class="zurueck-button" id="zurueckZumTextButton">🔁 Zurück zum Text</button>
       <div>
-        <button id="prevQuestion">Vorherige Frage</button>
+        <button id="prevQuestion">⬅️ Vorherige Frage</button>
         <button id="nextQuestion">Nächste Frage ➡️</button>
       </div>
     </div>
@@ -288,6 +288,9 @@ const textAbschnitte = [
 ];
 
 
+
+
+
 let currentIndex = 0;
 let quizIndex = 0;
 let richtigeAntworten = 0;
@@ -355,6 +358,46 @@ function ladeFrage() {
     zeigeErgebnis();
   }
 }
+
+
+
+function ladeFrage() {
+  if (quizIndex < quizFragen.length) {
+    document.getElementById("question").innerText = quizFragen[quizIndex].frage;
+    document.getElementById("quizProgressBar").style.width = ((quizIndex + 1) / quizFragen.length) * 100 + "%";
+
+    const answerContainer = document.getElementById("answers");
+    answerContainer.innerHTML = "";
+
+    quizFragen[quizIndex].antworten.forEach((antwort, index) => {
+      const button = document.createElement("button");
+      button.innerText = antwort;
+      button.classList.add("answer");
+
+      button.addEventListener("click", () => {
+        // Alle Buttons deaktivieren
+        Array.from(answerContainer.children).forEach(btn => btn.disabled = true);
+
+        // Wenn richtige Antwort gewählt
+        if (index === quizFragen[quizIndex].korrekt) {
+          button.classList.add("correct");
+          richtigeAntworten++;
+        } else {
+          button.classList.add("wrong");
+          // Richtige Antwort zusätzlich markieren
+          answerContainer.children[quizFragen[quizIndex].korrekt].classList.add("correct");
+        }
+      });
+
+      answerContainer.appendChild(button);
+    });
+  } else {
+    zeigeErgebnis();
+  }
+}
+
+
+
 
 document.getElementById("nextQuestion").addEventListener("click", () => {
   if (quizIndex < quizFragen.length - 1) {
